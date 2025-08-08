@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { POST as runApiPOST } from '../runapi/route';
 
 export const runtime = 'nodejs';
@@ -45,11 +44,12 @@ export async function POST(req: NextRequest) {
   // Delegate to existing implementation (runapi)
   let innerResp: Response;
   try {
-    innerResp = await runApiPOST(new Request('http://internal', {
+    const innerReq = new NextRequest('http://internal', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json' } as any,
       body: JSON.stringify({ documents, questions }),
-    } as RequestInit));
+    } as any);
+    innerResp = await runApiPOST(innerReq as any);
   } catch (e: any) {
     const msg = e?.message || String(e);
     return NextResponse.json({ step: 'delegate', error: msg }, { status: 500 });
