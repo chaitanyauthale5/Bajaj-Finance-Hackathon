@@ -1,11 +1,22 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Pinecone } from '@pinecone-database/pinecone';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY as string);
-const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
-const INDEX_NAME = process.env.PINECONE_INDEX || 'bajaj2';
-const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL || 'text-embedding-004';
-const PINECONE_DIM = parseInt(process.env.PINECONE_DIM || '1536', 10);
+// Resolve and validate env vars to avoid "string | undefined" typing issues on Vercel
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY ?? '';
+const PINECONE_API_KEY = process.env.PINECONE_API_KEY ?? '';
+const INDEX_NAME = process.env.PINECONE_INDEX ?? 'bajaj2';
+const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL ?? 'text-embedding-004';
+const PINECONE_DIM = parseInt(process.env.PINECONE_DIM ?? '1536', 10);
+
+if (!GOOGLE_API_KEY) {
+  throw new Error('Missing GOOGLE_API_KEY env');
+}
+if (!PINECONE_API_KEY) {
+  throw new Error('Missing PINECONE_API_KEY env');
+}
+
+const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
+const pinecone = new Pinecone({ apiKey: PINECONE_API_KEY });
 
 async function sleep(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
