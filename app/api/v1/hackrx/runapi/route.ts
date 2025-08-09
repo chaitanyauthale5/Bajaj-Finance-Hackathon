@@ -3,6 +3,9 @@ import { NextRequest } from 'next/server';
 // Force Node.js runtime to support Node-only deps used in POST (pdf-parse, mammoth, etc.)
 export const runtime = 'nodejs';
 
+// Resolve envs with safe defaults to avoid string | undefined in builds
+const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL ?? 'text-embedding-004';
+
 export async function GET() {
   return new Response(JSON.stringify({ status: 'ok' }), {
     headers: { 'Content-Type': 'application/json' }

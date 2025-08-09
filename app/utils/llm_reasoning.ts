@@ -1,7 +1,11 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY as string);
-const CHAT_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY ?? '';
+if (!GOOGLE_API_KEY) {
+  throw new Error('Missing GOOGLE_API_KEY env');
+}
+const CHAT_MODEL: string = process.env.GEMINI_MODEL ?? 'gemini-1.5-flash';
+const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
 
 async function sleep(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
